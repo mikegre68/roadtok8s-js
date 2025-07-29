@@ -1,10 +1,13 @@
 name: Run Ansible
 on:
   workflow_dispatch:
- 
+  # push:
+  #   branches:
+  #     - main
+
 jobs:
   run-playbooks:
- 
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -27,7 +30,7 @@ jobs:
         export INVENTORY_FILE=./devops/ansible/inventory.ini
         echo "[my_host_group]" > $INVENTORY_FILE
         echo "${{ secrets.AKAMAI_INSTANCE_IP_ADDRESS }}" >> $INVENTORY_FILE
-    - name: Ansible Default Configuration File
+    - name: Create a Ansible Default Configuration File
       run: |
         mkdir -p ./devops/ansible/
         cat <<EOF > ./devops/ansible/ansible.cfg
@@ -42,11 +45,12 @@ jobs:
       working-directory: ./devops/ansible/
       run: |
        ansible all -m ping
-    - name: Run Ansible Playbooks
+    # left for future reference
+    # - name: Run Ansible Playbooks
+    #   working-directory: ./devops/ansible/
+    #   run: |
+    #    ansible-playbook install-nginx.yaml
+    - name: Deploy Node.js via Ansible
       working-directory: ./devops/ansible/
       run: |
        ansible-playbook deploy-js.yaml
-    - name: Deploy Python via Ansible
-      working-directory: ./devops/ansible/
-      run: |
-       ansible-playbook deploy-python.yaml
